@@ -1,0 +1,262 @@
+/* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #2e7d32;
+    padding: 10px 20px;
+    color: white;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+/* Mobile Navigation */
+.nav-toggle {
+    display: none;
+}
+
+#mobile-nav {
+    display: none;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e8f5e9;
+    color: #333;
+    margin: 20px;
+}
+
+h1 {
+    text-align: center;
+    color: #2e7d32;
+    margin-bottom: 20px;
+}
+
+section {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+h2 {
+    border-bottom: 2px solid #388e3c;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+    color: #388e3c;
+}
+
+input[type="text"], input[type="number"], select {
+    border: 1px solid #c8e6c9;
+    border-radius: 4px;
+    padding: 10px;
+    font-size: 16px;
+    margin-right: 10px;
+    background-color: #f1f8e9;
+}
+
+input[type="number"] {
+    width: 30px;
+}
+
+button {
+    background-color: #388e3c;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+button:hover {
+    background-color: #2c6c2f;
+}
+
+.result-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.result-form select,
+.result-form input {
+    flex: 1;
+    max-width: 120px;
+}
+
+#add-result-btn, #remove-team button {
+    display: block;
+    width: 100%;
+    max-width: 150px;
+    margin-top: 10px;
+}
+
+.remove-team-form {
+    display: grid;
+    grid-template-columns: 200px auto;
+}
+
+.buttons {
+    margin-left: 45%;
+}
+
+.buttons button {
+    width: 150px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+}
+
+thead {
+    background-color: #388e3c;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background-color: #f1f8e9;
+}
+
+tr:hover {
+    background-color: #c8e6c9;
+}
+
+.actions {
+    display: flex;
+    gap: 5px;
+}
+
+.edit-btn, .delete-btn {
+    border: none;
+    border-radius: 4px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.edit-btn {
+    background-color: #4caf50;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #388e3c;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #c62828;
+}
+
+/* Mobile Styles */
+#mobile-nav {
+    display: none;
+}
+
+.nav-toggle {
+    display: none;
+}
+
+
+
+/* Mobile view */
+@media (max-width: 768px) {
+    .nav-toggle {
+        display: block;
+        background-color: #2c6c2f;
+        border: none;
+        color: white;
+        font-size: 24px;
+        padding: 10px;
+        cursor: pointer;
+    }
+
+    #desktop-nav {
+        display: none;
+    }
+
+    #mobile-nav {
+        display: block;
+        position: fixed;
+        top: 0;
+        left: -250px;
+        width: 250px;
+        height: 100%;
+        background-color: #2e7d32;
+        color: white;
+        padding: 20px;
+        transition: left 0.3s ease;
+    }
+
+    #mobile-nav ul {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    #mobile-nav a {
+        font-size: 18px;
+    }
+
+    #mobile-nav.open {
+        left: 0;
+    }
+
+    /* Hide unnecessary columns */
+    #league-table th:nth-child(5), /* Goals For */
+    #league-table th:nth-child(6), /* Goals Against */
+    #league-table td:nth-child(5),
+    #league-table td:nth-child(6) {
+        display: none;
+    }
+
+    /* Make table scrollable */
+    #league-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    #results-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}

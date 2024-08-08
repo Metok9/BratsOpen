@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BRTAS OPEN 2024</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav id="desktop-nav">
+            <ul>
+                <li><a href="#team-section">Igrači</a></li>
+                <li><a href="#standings-section">Tablica</a></li>
+                <li><a href="#result-section">Rezultati</a></li>
+                <li><a href="./PROPOZICIJE.pdf" target="_blank">Propozicije</a></li>
+            </ul>
+        </nav>
+        <button class="nav-toggle" onclick="toggleNav()">☰</button>
+        <nav id="mobile-nav">
+            <ul>
+                <li><a href="#team-section">Igrači</a></li>
+                <li><a href="#standings-section">Tablica</a></li>
+                <li><a href="#result-section">Rezultati</a></li>
+                <li><a href="./PROPOZICIJE.pdf" target="_blank">Propozicije</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="team-section">
+        <h1>BRTAS OPEN 2024</h1>
+        <div>
+            <h2>Dodaj brata</h2>
+            <input type="text" id="team-name" placeholder="Upišite ime igrača">
+            <button onclick="addTeam()">Dodaj</button>
+        </div>
+        <br>
+        <div>
+            <h2>Ukloni brata</h2>
+            <select id="remove-team-select">
+                <option value="">Odaberite igrača</option>
+            </select>
+            <button onclick="removeTeam()">Obriši</button>
+        </div>
+    </section>
+
+    <section id="result-section">
+        <h2>Unesite rezultat</h2>
+        <div class="result-form">
+            <select id="team1-select">
+                <option value="">Odaberite domačina</option>
+            </select>
+            <input type="number" id="team1-score" placeholder="" min="0">
+            <input type="number" id="team2-score" placeholder="" min="0">
+            <select id="team2-select">
+                <option value="">Odaberite gosta</option>
+            </select>
+        </div>
+        <div class="buttons">
+            <button id="add-result-btn" onclick="addResult()">Dodaj rezultat</button>
+            <button id="update-result-btn" onclick="updateResult()" style="display: none;">Ažuriraj rezultat</button>
+        </div>
+    </section>
+
+    <section id="standings-section">
+        <h2>Tablica</h2>
+        <table id="league-table">
+            <thead>
+                <tr>
+                    <th>Igrač</th>
+                    <th>Odigrano mečeva</th>
+                    <th>Pobjede</th>
+                    <th>Porazi</th>
+                    <th>Osvojenih setova</th>
+                    <th>Izgubljenih setova</th>
+                    <th>Razlika setova</th>
+                    <th>Bodovi</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+    
+
+    <section id="results-section">
+        <h2>Past Results</h2>
+        <table id="results-table">
+            <thead>
+                <tr>
+                    <th>Domačin</th>
+                    <th>Osvojeni setovi domačina</th>
+                    <th>Osvojeni setovi gosta</th>
+                    <th>Gost</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
