@@ -160,21 +160,7 @@ async function addTeam() {
 
 // Remove a team
 async function removeTeam() {
-    const teamSelect = document.getElementById('remove-team-select');
-    const selectedTeam = teamSelect.value;
-    if (selectedTeam) {
-        const data = await fetchData();
-        if (!data) return;
-
-        data.teams = data.teams.filter(team => team !== selectedTeam);
-        data.results = data.results.filter(result => result.team1 !== selectedTeam && result.team2 !== selectedTeam);
-        await saveData(data);
-        loadTeams();
-        loadResults();
-        alert(`Uklonjen igrač: ${selectedTeam}`);
-    } else {
-        alert('Molimo odaberite igrača.');
-    }
+    alert('Neće moći ove noći, obrati se Metoku');
 }
 
 // Add a new result
