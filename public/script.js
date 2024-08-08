@@ -235,16 +235,22 @@ async function saveData(data) {
 function updateStandings(data) {
     const standings = {};
 
-    // Initialize standings
+    // Initialize standings for all teams
+    data.teams.forEach(team => {
+        standings[team] = {
+            played: 0,
+            won: 0,
+            drawn: 0,
+            lost: 0,
+            goalsFor: 0,
+            goalsAgainst: 0,
+            points: 0
+        };
+    });
+
+    // Process results to update standings
     data.results.forEach(result => {
         const { team1, team2, score1, score2 } = result;
-
-        if (!standings[team1]) {
-            standings[team1] = { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
-        }
-        if (!standings[team2]) {
-            standings[team2] = { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
-        }
 
         standings[team1].played++;
         standings[team2].played++;
@@ -302,4 +308,3 @@ function updateStandings(data) {
         standingsTableBody.appendChild(row);
     });
 }
-
