@@ -9,37 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const apiUrl = '/data';
 
-async function fetchData() {
-    try {
-        const response = await fetch(apiUrl);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error('Error fetching data:', error);
-    }
-}
-
-async function saveData(data) {
-    try {
-        const response = await fetch(apiUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        console.log('Data saved successfully');
-    } catch (error) {
-        console.error('Error saving data:', error);
-    }
-}
-
+// Load teams into select elements
 async function loadTeams() {
     const data = await fetchData();
     if (!data) return;
@@ -69,6 +39,7 @@ async function loadTeams() {
     updateStandings(data); // Update standings after loading teams
 }
 
+// Load results into the results table
 async function loadResults() {
     const data = await fetchData();
     if (!data) return;
@@ -83,14 +54,90 @@ async function loadResults() {
             <td>${result.score1}</td>
             <td>${result.score2}</td>
             <td>${result.team2}</td>
-           
+            <td>
+                <button onclick="populateEditForm(${index})" class="edit-btn">Edit</button>
+                <button onclick="deleteResult(${index})" class="delete-btn">Delete</button>
+            </td>
         `;
         resultsTableBody.appendChild(row);
     });
 
-    updateStandings(data); // Update standings after loading results
+    updateStandings(data); // Ensure standings are updated
 }
 
+// Populate result entry form with details for editing
+async function populateEditForm(index) {
+    const data = await fetchData();
+    if (!data) return;
+
+    const result = data.results[index];
+    const team1Select = document.getElementById('team1-select');
+    const team2Select = document.getElementById('team2-select');
+
+    team1Select.innerHTML = '<option value="">Odaberite domačina</option>';
+    team2Select.innerHTML = '<option value="">Odaberite gosta</option>';
+
+    data.teams.forEach(team => {
+        const option1 = document.createElement('option');
+        option1.value = team;
+        option1.textContent = team;
+        if (team === result.team1) option1.selected = true;
+        team1Select.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = team;
+        option2.textContent = team;
+        if (team === result.team2) option2.selected = true;
+        team2Select.appendChild(option2);
+    });
+
+    document.getElementById('team1-score').value = result.score1;
+    document.getElementById('team2-score').value = result.score2;
+
+    document.getElementById('add-result-btn').style.display = 'none';
+    document.getElementById('update-result-btn').style.display = 'block';
+    document.getElementById('update-result-btn').dataset.index = index;
+}
+
+// Save the edited result
+async function updateResult() {
+    const index = document.getElementById('update-result-btn').dataset.index;
+    const team1 = document.getElementById('team1-select').value;
+    const team2 = document.getElementById('team2-select').value;
+    const score1 = parseInt(document.getElementById('team1-score').value, 10);
+    const score2 = parseInt(document.getElementById('team2-score').value, 10);
+
+    if (team1 && team2 && !isNaN(score1) && !isNaN(score2)) {
+        const data = await fetchData();
+        if (!data) return;
+
+        data.results[index] = { team1, team2, score1, score2 };
+
+        await saveData(data);
+        document.getElementById('team1-score').value = '';
+        document.getElementById('team2-score').value = '';
+        document.getElementById('add-result-btn').style.display = 'block';
+        document.getElementById('update-result-btn').style.display = 'none';
+        loadResults(); // Refresh results table
+        updateStandings(data); // Ensure standings are updated
+        alert('Result updated.');
+    } else {
+        alert('Please enter valid scores and teams.');
+    }
+}
+
+// Delete a result
+async function deleteResult(index) {
+    const data = await fetchData();
+    if (!data) return;
+
+    data.results.splice(index, 1);
+    await saveData(data);
+    loadResults();
+    alert('Result deleted.');
+}
+
+// Add a new team
 async function addTeam() {
     const teamName = document.getElementById('team-name').value.trim();
     if (teamName) {
@@ -111,6 +158,7 @@ async function addTeam() {
     }
 }
 
+// Remove a team
 async function removeTeam() {
     const teamSelect = document.getElementById('remove-team-select');
     const selectedTeam = teamSelect.value;
@@ -129,6 +177,7 @@ async function removeTeam() {
     }
 }
 
+// Add a new result
 async function addResult() {
     const team1 = document.getElementById('team1-select').value;
     const team2 = document.getElementById('team2-select').value;
@@ -150,72 +199,72 @@ async function addResult() {
     }
 }
 
-function updateResult() {
-    // Implement update result logic here
-    alert('Result updated.');
+// Fetch data from the server
+async function fetchData() {
+    try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching data:', error);
+    }
 }
 
-function editResult(index) {
-    // Implement edit result logic here
-    alert(`Editing result ${index}`);
+// Save data to the server
+async function saveData(data) {
+    try {
+        const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        console.log('Data saved successfully');
+    } catch (error) {
+        console.error('Error saving data:', error);
+    }
 }
 
-function deleteResult(index) {
-    // Implement delete result logic here
-    alert(`Deleted result ${index}`);
-}
-
-function toggleNav() {
-    const nav = document.getElementById('mobile-nav');
-    nav.classList.toggle('open');
-    document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : 'auto';
-}
-
+// Update the standings table
 function updateStandings(data) {
-    const standingsTableBody = document.querySelector('#league-table tbody');
-    standingsTableBody.innerHTML = '';
-
-    const teams = data.teams;
-    const results = data.results;
-
     const standings = {};
 
-    // Initialize standings for all teams
-    teams.forEach(team => {
-        standings[team] = {
-            played: 0,
-            won: 0,
-            lost: 0,
-            points: 0,
-            goalsFor: 0,
-            goalsAgainst: 0,
-            goalDifference: 0
-        };
-    });
-
-    // Calculate results
-    results.forEach(result => {
+    // Initialize standings
+    data.results.forEach(result => {
         const { team1, team2, score1, score2 } = result;
 
-        standings[team1].played += 1;
-        standings[team2].played += 1;
+        if (!standings[team1]) {
+            standings[team1] = { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+        }
+        if (!standings[team2]) {
+            standings[team2] = { played: 0, won: 0, drawn: 0, lost: 0, goalsFor: 0, goalsAgainst: 0, points: 0 };
+        }
+
+        standings[team1].played++;
+        standings[team2].played++;
         standings[team1].goalsFor += score1;
         standings[team1].goalsAgainst += score2;
         standings[team2].goalsFor += score2;
         standings[team2].goalsAgainst += score1;
 
         if (score1 > score2) {
-            standings[team1].won += 1;
-            standings[team2].lost += 1;
+            standings[team1].won++;
+            standings[team2].lost++;
             standings[team1].points += 3;
-        } else if (score1 < score2) {
-            standings[team1].lost += 1;
-            standings[team2].won += 1;
-            standings[team2].points += 3;
-        } else {
-            standings[team1].points += 1;
             standings[team2].points += 1;
+        } else if (score1 < score2) {
+            standings[team2].won++;
+            standings[team1].lost++;
+            standings[team2].points += 3;
+            standings[team1].points += 1;
         }
+        // No draw case as it's not allowed
     });
 
     // Calculate goal difference
@@ -223,18 +272,21 @@ function updateStandings(data) {
         standings[team].goalDifference = standings[team].goalsFor - standings[team].goalsAgainst;
     });
 
-    // Convert standings object to an array and sort by points and goal difference
+    // Convert standings object to an array and sort
     const sortedStandings = Object.keys(standings).map(team => ({
         team,
         ...standings[team]
     })).sort((a, b) => {
         if (b.points === a.points) {
-            return b.goalDifference - a.goalDifference;
+            return b.goalDifference - a.goalDifference; // Sort by goal difference if points are the same
         }
-        return b.points - a.points;
+        return b.points - a.points; // Sort by points
     });
 
     // Render sorted standings
+    const standingsTableBody = document.querySelector('#league-table tbody');
+    standingsTableBody.innerHTML = '';
+
     sortedStandings.forEach(entry => {
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -250,17 +302,4 @@ function updateStandings(data) {
         standingsTableBody.appendChild(row);
     });
 }
-
-function toggleNav() {
-    const mobileNav = document.getElementById('mobile-nav');
-    mobileNav.classList.toggle('open');
-}
-
-// Close the mobile nav when clicking outside
-document.addEventListener('click', (event) => {
-    const mobileNav = document.getElementById('mobile-nav');
-    if (!mobileNav.contains(event.target) && !event.target.matches('.nav-toggle')) {
-        mobileNav.classList.remove('open');
-    }
-});
 

@@ -1,4 +1,21 @@
 {
-  "teams": [],
-  "results": []
+  "teams": [
+    "metok",
+    "kova",
+    "slon"
+  ],
+  "results": [
+    {
+      "team1": "kova",
+      "team2": "slon",
+      "score1": 2,
+      "score2": 0
+    },
+    {
+      "team1": "slon",
+      "team2": "metok",
+      "score1": 2,
+      "score2": 1
+    }
+  ]
 }
