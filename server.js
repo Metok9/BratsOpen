@@ -1,40 +1,37 @@
+// server.js
 const express = require('express');
-const fs = require('fs');
-const path = require('path');
+const bodyParser = require('body-parser');
+const { Team, Match } = require('./db');
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
+app.use(bodyParser.json());
 app.use(express.static('public'));
 
-const dataFilePath = path.join(__dirname, 'data.json');
-
-app.get('/data', (req, res) => {
-    fs.readFile(dataFilePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading data file:', err);
-            return res.status(500).json({ error: 'Failed to read data' });
-        }
-        try {
-            res.json(JSON.parse(data));
-        } catch (parseErr) {
-            console.error('Error parsing JSON:', parseErr);
-            res.status(500).json({ error: 'Failed to parse data' });
-        }
-    });
+app.get('/data', async (req, res) => {
+    const teams = await Team.findAll();
+    const results = await Match.findAll();
+    res.json({ teams, results });
 });
 
-app.post('/data', (req, res) => {
-    fs.writeFile(dataFilePath, JSON.stringify(req.body, null, 2), 'utf8', (err) => {
-        if (err) {
-            console.error('Error writing data file:', err);
-            return res.status(500).json({ error: 'Failed to save data' });
-        }
-        res.status(200).json({ message: 'Data saved successfully' });
-    });
+app.post('/data', async (req, res) => {
+    const { teams, results } = req.body;
+    
+    await Team.destroy({ where: {} });
+    await Match.destroy({ where: {} });
+
+    for (let team of teams) {
+        await Team.create(team);
+    }
+
+    for (let match of results) {
+        await Match.create(match);
+    }
+
+    res.json({ success: true });
 });
 
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
+app.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
 });
