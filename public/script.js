@@ -9,6 +9,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const apiUrl = '/data';
 
+function toggleNav() {
+    const mobileNav = document.getElementById('mobile-nav');
+    const navToggle = document.querySelector('.nav-toggle');
+
+    // Toggle the 'open' class on the mobile navigation
+    mobileNav.classList.toggle('open');
+
+    // Toggle the 'active' class on the nav toggle button for a visual effect
+    navToggle.classList.toggle('active');
+
+    // Add a click event listener to the document to close the nav when clicking outside of it
+    if (mobileNav.classList.contains('open')) {
+        document.addEventListener('click', closeNavOnClickOutside);
+    } else {
+        document.removeEventListener('click', closeNavOnClickOutside);
+    }
+}
+
+function closeNavOnClickOutside(event) {
+    const mobileNav = document.getElementById('mobile-nav');
+    const navToggle = document.querySelector('.nav-toggle');
+
+    // Check if the click was outside the navigation or on a navigation link
+    if (!mobileNav.contains(event.target) && !navToggle.contains(event.target)) {
+        mobileNav.classList.remove('open');
+        navToggle.classList.remove('active');
+
+        // Remove the event listener after the nav is closed
+        document.removeEventListener('click', closeNavOnClickOutside);
+    }
+}
+
+
 async function loadTeams() {
     const data = await fetchData();
     if (!data) return;
@@ -224,6 +257,7 @@ async function saveData(data) {
 function updateStandings(data) {
     const standings = {};
 
+    // Initialize standings for all teams
     data.teams.forEach(team => {
         standings[team.name] = {
             played: 0,
@@ -235,6 +269,7 @@ function updateStandings(data) {
         };
     });
 
+    // Process results to update standings
     data.results.forEach(result => {
         const { team1, team2, team1Score, team2Score } = result;
 
@@ -248,28 +283,33 @@ function updateStandings(data) {
         if (team1Score > team2Score) {
             standings[team1].won++;
             standings[team2].lost++;
-            standings[team1].points += 3;
+            standings[team1].points += 3; // 3 points for a win
+            standings[team2].points += 1; // 1 point for a loss
         } else if (team1Score < team2Score) {
             standings[team2].won++;
             standings[team1].lost++;
-            standings[team2].points += 3;
+            standings[team2].points += 3; // 3 points for a win
+            standings[team1].points += 1; // 1 point for a loss
         }
     });
 
+    // Calculate goal difference
     Object.keys(standings).forEach(team => {
         standings[team].goalDifference = standings[team].goalsFor - standings[team].goalsAgainst;
     });
 
+    // Convert standings object to an array and sort
     const sortedStandings = Object.keys(standings).map(team => ({
         team,
         ...standings[team]
     })).sort((a, b) => {
         if (b.points === a.points) {
-            return b.goalDifference - a.goalDifference;
+            return b.goalDifference - a.goalDifference; // Sort by goal difference if points are the same
         }
-        return b.points - a.points;
+        return b.points - a.points; // Sort by points
     });
 
+    // Render sorted standings
     const standingsTableBody = document.querySelector('#league-table tbody');
     standingsTableBody.innerHTML = '';
 
@@ -288,3 +328,6 @@ function updateStandings(data) {
         standingsTableBody.appendChild(row);
     });
 }
+
+
+
